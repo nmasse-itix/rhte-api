@@ -1,0 +1,61 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: rhte-api-pipeline
+metadata:
+  annotations:
+    description: RHTE Deployment Pipeline
+  name: rhte-api-pipeline
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      name: rhte-pipeline
+    name: rhte-pipeline
+  spec:
+    output: null
+    postCommit: null
+    resources: null
+    runPolicy: Serial
+    source:
+      type: None
+    source:
+      git:
+        uri: ${GIT_REPO}
+    strategy:
+      type: JenkinsPipeline
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: Jenkinsfile
+        env:
+        - name: GIT_BRANCH
+          value: master
+        - name: GIT_REPO
+          value: ${GIT_REPO}
+        - name: ANSIBLE_TEST_INVENTORY
+          value: 3scale-test
+        - name: ANSIBLE_PROD_INVENTORY
+          value: 3scale-prod
+        - name: ANSIBLE_JOB_TEMPLATE
+          value: Deploy an API to 3scale
+        - name: TOWER_SERVER
+          value: tower
+        - name: OPENSHIFT_SERVICE_NAME
+          value: rhte-api
+        - name: OPENSHIFT_IMAGE_STREAM
+          value: rhte-api
+        - name: OPENSHIFT_BUILD_CONFIG
+          value: rhte-api
+        - name: OPENSHIFT_BUILD_PROJECT
+          value: rhte-build
+        - name: OPENSHIFT_TEST_ENVIRONMENT
+          value: rhte-test
+        - name: OPENSHIFT_PROD_ENVIRONMENT
+          value: rhte-prod
+        - name: OPENSHIFT_DEPLOYMENT_CONFIG
+          value: rhte-api
+parameters:
+- description: The GIT repository to use.
+  displayName: GIT Repo URL
+  name: GIT_REPO
+  value: https://github.com/nmasse-itix/rhte-api.git
