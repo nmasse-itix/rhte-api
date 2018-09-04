@@ -1,0 +1,15 @@
+{
+  "name": "rhte-api",
+  "version": "0.0.1",
+  "description": "A demo showing CI/CD with 3scale AMP",
+  "main": "server.js",
+  "scripts": {
+    "test": "true"
+  },
+  "author": "Nicolas MASSE",
+  "repository": "https://github.com/nmasse-itix/rhte-api.git",
+  "license": "MIT",
+  "dependencies": {
+    "express": "latest"
+  }
+}
