@@ -1,7 +1,7 @@
 ---
-swagger: 2.0
+swagger: '2.0'
 info:
-  title: RHTE API
+  title: RHTE API v1.1
   description: An API that gives information about the Red Hat Tech Exchange.
   version: 1.1.0
 paths:
