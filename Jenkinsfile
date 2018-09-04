@@ -16,7 +16,7 @@ node('nodejs') {
   def towerExtraVars = [
       git_repo: gitRepo,
       git_branch: gitBranch,
-      threescale_cicd_api_backend_hostname: params.OPENSHIFT_SERVICE_NAME,
+      threescale_cicd_api_backend_hostname: params.OPENSHIFT_SERVICE_NAME + ":8080",
       threescale_cicd_openapi_smoketest_operation: "GetLocation",
       threescale_cicd_api_backend_scheme: "http",
       threescale_cicd_api_base_system_name: "rhte_api",
