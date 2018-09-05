@@ -71,17 +71,11 @@ oc process -f apicast-template.yaml -p ACCESS_TOKEN=<YOUR_3SCALE_ACCESS_TOKEN> -
 ### 9/ Create the OpenShift routes for your APIcast gateways
 
 ```sh
-oc expose svc/apicast-staging --hostname=rhte-api-1-staging.test.app.itix.fr --name rhte-api-1-staging -n rhte-test
-oc expose svc/apicast-staging --hostname=rhte-api-2-staging.test.app.itix.fr --name rhte-api-2-staging -n rhte-test
-oc expose svc/apicast-production --hostname=rhte-api-1.test.app.itix.fr --name rhte-api-1-production -n rhte-test
-oc expose svc/apicast-production --hostname=rhte-api-2.test.app.itix.fr  --name rhte-api-2-production -n rhte-test
-oc expose svc/apicast-staging --hostname=rhte-api-1-staging.prod.app.itix.fr --name rhte-api-1-staging -n rhte-prod
-oc expose svc/apicast-staging --hostname=rhte-api-2-staging.prod.app.itix.fr --name rhte-api-2-staging -n rhte-prod
-oc expose svc/apicast-production --hostname=rhte-api-1.prod.app.itix.fr --name rhte-api-1-production -n rhte-prod
-oc expose svc/apicast-production --hostname=rhte-api-2.prod.app.itix.fr  --name rhte-api-2-production -n rhte-prod
+oc process -f apicast-routes-template.yaml -p MAJOR_VERSION=1 -p WILDCARD_DOMAIN=test.app.itix.fr | oc create -f - -n rhte-test
+oc process -f apicast-routes-template.yaml -p MAJOR_VERSION=2 -p WILDCARD_DOMAIN=test.app.itix.fr | oc create -f - -n rhte-test
+oc process -f apicast-routes-template.yaml -p MAJOR_VERSION=1 -p WILDCARD_DOMAIN=prod.app.itix.fr | oc create -f - -n rhte-prod
+oc process -f apicast-routes-template.yaml -p MAJOR_VERSION=2 -p WILDCARD_DOMAIN=prod.app.itix.fr | oc create -f - -n rhte-prod
 ```
-
-TODO: Patch the routes to enable HTTPS
 
 ### 10/ Deploy Ansible Tower
 
