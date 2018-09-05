@@ -99,22 +99,23 @@ spec:
     requests:
       storage: "5Gi"
 EOF
-git clone -b 1.0.6 https://github.com/ansible/awx.git
+```
+
+> Note: since AWX moves very fast, it is recommended to settle the version of all components.
+
+```sh
+git clone https://github.com/ansible/awx.git
 git clone https://github.com/ansible/awx-logos.git
-cd awx/installer/
-ansible-playbook -i inventory install.yml -e dockerhub_version=1.0.7 -e openshift_host="$(oc whoami --show-server)" -e openshift_skip_tls_verify=true -e openshift_project="$(oc project -q)" -e openshift_user="$(oc whoami)" -e openshift_token="$(oc whoami -t)" -e default_admin_user=admin -e default_admin_password=redhat123 -e awx_official=true
+cd awx
+git checkout 2b9954c .
+cd installer
+ansible-playbook -i inventory install.yml -e kubernetes_web_version=1.0.7.2 -e kubernetes_web_version=1.0.7.2 -e kubernetes_memcached_image=1.5.10 -e openshift_host="$(oc whoami --show-server)" -e openshift_skip_tls_verify=true -e openshift_project="$(oc project -q)" -e openshift_user="$(oc whoami)" -e openshift_token="$(oc whoami -t)" -e admin_user=admin -e admin_password=redhat123 -e awx_official=true
 ```
 
-Because there is a bug in the latest version of the AWX installer, you might have to update the deployment config.
+The default installation of AWX uses a combination of `latest` tags and an `imagePullPolicy` set to `always`, which is a recipe for disaster. All tags have been set explicitely on the command line earlier, now you can set the `imagePullPolicy` to `IfNotPresent`.
 
 ```sh
-oc patch dc/awx --type=json -p '[ { "op": "copy", "from": "/spec/template/spec/containers/1", "path": "/spec/template/spec/containers/0" } ]'
-```
-
-The default installation of AWX uses a combination of `latest` tags and an `imagePullPolicy` set to `always`, which is a recipe for disaster. Fix all tags to your prefered version and set the `imagePullPolicy` to `IfNotPresent`.
-
-```sh
-oc patch dc/awx --type=json -p '[ { "op": "replace", "path": "/spec/template/spec/containers/0/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/1/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/2/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/3/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/0/image", "value": "ansible/awx_web:1.0.7.2" }, { "op": "replace", "path": "/spec/template/spec/containers/1/image", "value": "ansible/awx_task:1.0.7.2" }, { "op": "replace", "path": "/spec/template/spec/containers/2/image", "value": "ansible/awx_rabbitmq:3.7.4" }, { "op": "replace", "path": "/spec/template/spec/containers/3/image", "value": "memcached:1.5.10" } ]'
+oc patch dc/awx --type=json -p '[ { "op": "replace", "path": "/spec/template/spec/containers/0/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/1/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/2/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/3/imagePullPolicy", "value": "IfNotPresent" } ]'
 ```
 
 ### 11/ Configure project and job in AWX
