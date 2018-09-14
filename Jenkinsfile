@@ -47,6 +47,7 @@ node('nodejs') {
                  srcStream: params.OPENSHIFT_IMAGE_STREAM, srcTag: 'latest', verbose: 'false'
 
   }
+
   stage('Deploy API to test') {
     // Tag the new build as "ready-for-test"
     openshiftTag alias: 'false', destStream: params.OPENSHIFT_IMAGE_STREAM, srcTag: "${newVersion}",
@@ -63,6 +64,14 @@ node('nodejs') {
                  extraVars: JsonOutput.toJson(towerExtraVars)
 
   }
+
+  stage('Run Integration Tests') {
+    microcksTest(apiURL: params.MICROCKS_SERVER_URL,
+                serviceId: params.MICROCKS_SERVICE_ID,
+                testEndpoint: params.MICROCKS_TEST_ENDPOINT,
+                runnerType: 'POSTMAN', verbose: 'true')
+  }
+
   stage('Deploy API to prod') {
     // Tag the new build as "ready-for-prod"
     openshiftTag alias: 'false', destStream: params.OPENSHIFT_IMAGE_STREAM, srcTag: "${newVersion}",

@@ -55,6 +55,12 @@ objects:
           value: ${OPENSHIFT_PROD_ENVIRONMENT}
         - name: OPENSHIFT_DEPLOYMENT_CONFIG
           value: ${OPENSHIFT_DEPLOYMENT_CONFIG}
+        - name: MICROCKS_SERVER_URL
+          value: ${MICROCKS_SERVER_URL}
+        - name: MICROCKS_SERVICE_ID
+          value: ${MICROCKS_SERVICE_ID}
+        - name: MICROCKS_TEST_ENDPOINT
+          value: ${MICROCKS_TEST_ENDPOINT}
 parameters:
 - name: GIT_REPO
   value: https://github.com/nmasse-itix/rhte-api.git
@@ -94,4 +100,12 @@ parameters:
   required: true
 - name: OPENSHIFT_DEPLOYMENT_CONFIG
   value: rhte-api
+  required: true
+- name: MICROCKS_SERVER_URL
+  value: http://microcks:8080/api
+  required: true
+- name: MICROCKS_SERVICE_ID
+  value: RHTE-API:1.1
+  required: true
+- name: MICROCKS_TEST_ENDPOINT
   required: true
