@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "eebbf7c9-f616-4e1e-9128-8f26dec53958",
-		"name": "RHTE API v1.1",
+		"name": "RHTE-API",
 		"description": "version=1.1 - An API that gives information about the Red Hat Tech Exchange",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
