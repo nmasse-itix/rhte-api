@@ -251,3 +251,138 @@ Go to [studio.apicur.io](https://studio.apicur.io/), login and import the three 
 * Choose `Import from URL`
 * Fill-in the URL field with the raw url of the first API Contract (https://raw.githubusercontent.com/nmasse-itix/rhte-api/master/api-contracts/openapi-spec-v1.0.yaml)
 * Repeat the process with the two remaining API contracts
+
+## Running the Demo
+
+_Welcome everybody ! We will spend twenty minutes together on a demo of 3scale._
+
+_In this demo we will explore together a practice that is more and more used on customer site: Agile API Development._
+
+_Here are the components that we will use in this demo. We will create an OpenAPI Specification using Apicurio. We will expose a mock of this API using Microcks. We will use Jenkins to deploy our first NodeJS implementation._
+
+![Demo Scenario](demo-scenario.png "Demo Scenario")
+
+_This will be our DEV environment. Of course, there will be other environments: a TEST environment and a PROD environment._
+
+_To deploy this setup, we will use OpenShift. To automate the delivery of our API between environments we will use Ansible Tower. To expose and manage our API, we will use, of course, 3scale._
+
+_In this setup, we will develop and deploy an API that gives information about the Red Hat Tech Exchange. Quite relevant, isn’t it ?_
+
+_There are two methods:_
+
+- _`GetLocation` to know the location of the next Tech Exchange_
+- _`GetTimeframe` to know when the next Tech Exchange takes place_
+
+_A first version, a v1.0, is already deployed._
+
+_Together, we have been tasked to craft, develop and deploy a v1.1 that provides an additional method `GetParticipants` so that we can know who will attend the next Tech Exchange._
+
+_And because strong security is at stake, we will upgrade the current API from an API Key scheme to the more secure protocol “OpenID Connect”. This will be our V2._
+
+_Let’s start our duty with Apicurio. In Apicurio we will create the GetParticipants method and bump the version number so that everyone can know a new version has been released._
+
+- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `RHTE API 1.0`.
+- Click `Edit API`
+- Change the version number to `1.1.0`
+- Add a path `/participants`
+- Add the `GET` method under `/participants`
+- Define a name, description and operation id for this method
+- Add a `200` response code with a description ("OK")
+- Go back to the `RHTE API` summary and click the three dots
+- Click `Publish`, choose `GitHub`
+- Select your organisation, find your forked repository named `rhte-api`, select the branch `master`
+- In the resource field, put `openapi-spec.yaml`
+- Give a commit message and click `Publish API`
+
+_Then, we need to define some examples for this new method. Here I used Postman to define an example: Manfred and myself are attending the Tech Exchange. Then, those examples are used to generate a mock that can be used internally or by partners to develop their clients using our new API._
+
+- Import the [postman_collection.json](postman_collection.json) file in Postman
+- Show the defined examples
+
+_In the meantime, we can start our implementation. Let’s develop some code for our new API Method._
+
+- Unfold the `Get participants` method and open the included example
+
+_The GetParticipants method needs to return a list of participants._
+
+_Ok, now we need to implement our new `GetParticipants` method. Let's do it !_
+
+- In GitHub, open the [server.js](server.js) file and uncomment the `router.get("/participants" ...` lines.
+- Save the file
+
+_Now, we have to deploy our new API: the v1.1 that contains the new method. For this, we need to deploy our new code to the three OpenShift environments but also to the 3scale environments._
+
+_We will use Jenkins that will do the Continuous Integration and Ansible for the Continuous Deployment._
+
+- Go to your OpenShift build project
+- Go to `Build` > `Pipelines`
+- Click on the `rhte-pipeline`
+- Click `Start Pipeline`
+
+_Let’s trigger a new deployment !_
+
+_While the deployment is running, let’s have a look at the Jenkins pipeline. In the first step, we checkout the source code, then we run unit tests. We then ask OpenShift to build the container image for us and tag it. Once built, the image is tagged “ready for dev” and deployed in the DEV environment. Jenkins triggers a new Job in Ansible that will takes care of the API Deployment in 3scale. And so on in the next environments._
+
+_In the meantime, our API has been deployed at least in the DEV environment. Let see how it looks._
+
+- Open your 3scale Developer Portal
+- Login with the built-in `john` user account
+- Go to `Applications` and find the smoke test application for the production environment
+- Copy the API Key
+- Go to `Documentation`, choose the `RHTE API (PROD, v1.1)` service
+- Click on the red exclamation mark
+- Fill-in your API Key
+- Validate
+- Try a call to `GetParticipants`
+
+_Ok, our v1.1 is deployed. Job done. Now, let’s deploy the V2._
+
+_The V2 will be based on v1.1 but will use OpenID Connect instead of API Keys._
+
+_As a developer, if I need to use OpenID Connect, I only need to know one thing: how to define it in the OpenID Specification. Let me show you._
+
+- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `RHTE API 1.0`.
+- Click `Edit API` and show the security definitions and security constraints
+
+_In the OpenID Specification, this part states that we require an API Key to use this API. Let’s replace it with this and now we are stating we want an OpenID Connect token instead._
+
+- Go to `APIs` > `View all APIs` and this time select the `RHTE API 2.0`.
+- Click `Edit API` and show the security definitions and security constraints
+
+_Since it is a breaking change of the API Contract, do not forget to change the API Version to 2.0._
+
+- Show the version number
+- Go back to the `RHTE API` summary and click the three dots
+- Click `Publish`, choose `GitHub`
+- Select your organisation, find your forked repository named `rhte-api`, select the branch `master`
+- In the resource field, put `openapi-spec.yaml`
+- Give a commit message and click `Publish API`
+
+_Let’s trigger the deployment of this V2._
+
+_While it’s running, let’s summarize what we learned so far:_
+
+- _Apicurio is used to define the API Contract between the provider and the consumer_
+- _Microcks is used to define a mock of the API that can be used by consumers to develop their clients without having to wait for our implementation_
+- _We developed our new API and pushed it to production using Jenkins and Ansible in an automated way._
+- _We showed how we can have API versioning in 3scale: minor versions can be pushed continuously, major versions can be deployed side-by-side._
+- _Last but not least, using OpenID Connect is just a matter of choosing it in the OpenAPI Specifications. As a developer, this is the only thing I have to remember. The deployment pipeline is doing the hard job of configuring everything for me._
+
+_If you liked this demo, please have a look at this serie of three articles that have been published on the Red Hat Developer Blog that present in great details the Agile API Development process:_
+
+- [An API Journey: From Idea to Deployment the Agile Way – Part I](https://developers.redhat.com/blog/2018/04/11/api-journey-idea-deployment-agile-part1/)
+- [An API Journey: From Idea to Deployment the Agile Way – Part II](https://developers.redhat.com/blog/2018/04/19/api-journey-idea-deployment-agile-way-part2/)
+- [An API Journey: From Idea to Deployment the Agile Way – Part III](https://developers.redhat.com/blog/2018/04/26/api-journey-idea-deployment-agile-way-part3/)
+
+## Reset the Demo
+
+- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `RHTE API 1.0`.
+- Set the version back to `1.0`
+- Remove the path `/participants`
+- Publish the API to your GitHub repository
+
+- Go to your 3scale admin portal and delete the four services (RHTE 1.1 TEST, RHTE 1.1 PROD, RHTE 2.0 TEST, RHTE 2.0 PROD)
+- Also delete the four ActiveDocs
+
+- In GitHub, open the [server.js](server.js) file and comment the `router.get("/participants" ...` lines.
+- Save the file
