@@ -405,9 +405,7 @@ _If you liked this demo, please have a look at this serie of three articles that
 - Set the version back to `1.0`
 - Remove the path `/participants`
 - Publish the API to your GitHub repository
-
 - Go to your 3scale admin portal and delete the four services (RHTE 1.1 TEST, RHTE 1.1 PROD, RHTE 2.0 TEST, RHTE 2.0 PROD)
 - Also delete the four ActiveDocs
-
 - In GitHub, open the [server.js](server.js) file and comment the `router.get("/participants" ...` lines.
-- Save the file
+- Trigger a new pipeline run
