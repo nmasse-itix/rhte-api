@@ -275,6 +275,9 @@ _There are two methods:_
 
 _A first version, a v1.0, is already deployed._
 
+- Open your 3scale Developer Portal
+- Go to `Documentation` and show the RHTE-API service flagged as v1.0
+
 _Together, we have been tasked to craft, develop and deploy a v1.1 that provides an additional method `GetParticipants` so that we can know who will attend the next Tech Exchange._
 
 _And because strong security is at stake, we will upgrade the current API from an API Key scheme to the more secure protocol “OpenID Connect”. This will be our V2._
@@ -298,16 +301,26 @@ _Then, we need to define some examples for this new method. Here I used Postman 
 
 - Import the [postman_collection.json](postman_collection.json) file in Postman
 - Show the defined examples
-
-_In the meantime, we can start our implementation. Let’s develop some code for our new API Method._
-
 - Unfold the `Get participants` method and open the included example
 
 _The GetParticipants method needs to return a list of participants._
 
+- Open your Microcks instance
+- Go to the services list and open the `RHTE-API` service
+- Show the `GetParticipants` method
+- Call it from a curl command:
+
+```sh
+curl -D - http://microcks-rhte.app.itix.fr/rest/RHTE-API/1.1/participants
+```
+
+_In the meantime, we can start our implementation. Let’s develop some code for our new API Method._
+
+- In GitHub, open the [server.js](server.js) file
+
 _Ok, now we need to implement our new `GetParticipants` method. Let's do it !_
 
-- In GitHub, open the [server.js](server.js) file and uncomment the `router.get("/participants" ...` lines.
+- Uncomment the `router.get("/participants" ...` lines.
 - Save the file
 
 _Now, we have to deploy our new API: the v1.1 that contains the new method. For this, we need to deploy our new code to the three OpenShift environments but also to the 3scale environments._
@@ -322,6 +335,18 @@ _We will use Jenkins that will do the Continuous Integration and Ansible for the
 _Let’s trigger a new deployment !_
 
 _While the deployment is running, let’s have a look at the Jenkins pipeline. In the first step, we checkout the source code, then we run unit tests. We then ask OpenShift to build the container image for us and tag it. Once built, the image is tagged “ready for dev” and deployed in the DEV environment. Jenkins triggers a new Job in Ansible that will takes care of the API Deployment in 3scale. And so on in the next environments._
+
+_Did you noticed the step called `Run integration tests`? The Jenkins pipeline is calling Microcks to ensure that the deployed service is compliant with the OpenAPI Specifications and business expectations._
+
+- In Postman, unfold the `GetParticipants` method
+- Click the `Tests` tab and show the included test
+
+_For the `GetParticipants` method, we defined a test that ensures the API always returns exactly two participants._
+
+- Show the included tests for the other methods
+- Go to the Microcks interface, go to `Services`
+- Open the `RHTE-API` service
+- Show the latest test, exhibit the response times and payload.
 
 _In the meantime, our API has been deployed at least in the DEV environment. Let see how it looks._
 
