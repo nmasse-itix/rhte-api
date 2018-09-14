@@ -1,0 +1,204 @@
+{
+	"info": {
+		"_postman_id": "eebbf7c9-f616-4e1e-9128-8f26dec53958",
+		"name": "RHTE API v1.1",
+		"description": "version=1.1 - An API that gives information about the Red Hat Tech Exchange",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "location",
+			"description": "Folder for location",
+			"item": [
+				{
+					"name": "Get Next RHTE Location",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2d7cbe68-c73e-4eda-b4f9-64e4ae1a7608",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Location is Praha\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.Location).to.eql(\"Praha\");",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": "http://{{hostname}}/location",
+						"description": "Get the location of the next RedHat Tech Exchange"
+					},
+					"response": [
+						{
+							"id": "1c010aad-ee21-4d5e-98af-53c737883e53",
+							"name": "Get Next RHTE Location",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": "http:///location"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{ \n  \"Location\": \"Praha\"\n}\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "timeframe",
+			"description": "Folder for timeframe",
+			"item": [
+				{
+					"name": "Get Next RHTE Timeframe",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2878eaa0-5d7f-4514-96dd-7aa7f5b9f590",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Has a From and a To\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.From).to.eql(\"17/09/2018\");",
+									"    pm.expect(jsonData.To).to.eql(\"21/09/2018\");",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": "http://{{hostname}}/timeframe",
+						"description": "Get the timeframe of the next RedHat Tech Exchange"
+					},
+					"response": [
+						{
+							"id": "6860c619-916c-4d92-ac0c-a82a40cf8e56",
+							"name": "Get Next RHTE Timeframe",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": "http:///timeframe"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "{ \n  \"From\": \"17/09/2018\",\n  \"To\": \"21/09/2018\"\n}\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "participants",
+			"description": "Folder for participants",
+			"item": [
+				{
+					"name": "Get Next RHTE Participants",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c4afb4fb-adc9-48e1-bfa8-fd2a60f8bf29",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"There are two participants\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.eql(2);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": "http://{{hostname}}/participants",
+						"description": "Get the participants of the next RedHat Tech Exchange"
+					},
+					"response": [
+						{
+							"id": "b498acc4-d8dd-4f2d-bd73-1f54d0854dc5",
+							"name": "Get Next RHTE Participants",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": "http:///participants"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text",
+									"name": "Content-Type"
+								}
+							],
+							"cookie": [],
+							"body": "[ \n  \"Manfred\",\n  \"Nicolas\"\n]"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "362a91c2-9574-44f4-a069-54d6621ddaa9",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "225b3a05-f70b-4170-befb-857c69e0a556",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
