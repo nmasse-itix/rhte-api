@@ -23,39 +23,75 @@ objects:
     source:
       git:
         uri: ${GIT_REPO}
+        ref: ${GIT_BRANCH}
     strategy:
       type: JenkinsPipeline
       jenkinsPipelineStrategy:
         jenkinsfilePath: Jenkinsfile
         env:
         - name: GIT_BRANCH
-          value: master
+          value: ${GIT_BRANCH}
         - name: GIT_REPO
           value: ${GIT_REPO}
         - name: ANSIBLE_TEST_INVENTORY
-          value: 3scale-test
+          value: ${ANSIBLE_TEST_INVENTORY}
         - name: ANSIBLE_PROD_INVENTORY
-          value: 3scale-prod
+          value: ${ANSIBLE_PROD_INVENTORY}
         - name: ANSIBLE_JOB_TEMPLATE
-          value: Deploy an API to 3scale
+          value: ${ANSIBLE_JOB_TEMPLATE}
         - name: ANSIBLE_TOWER_SERVER
-          value: tower
+          value: ${ANSIBLE_TOWER_SERVER}
         - name: OPENSHIFT_SERVICE_NAME
-          value: rhte-api
+          value: ${OPENSHIFT_SERVICE_NAME}
         - name: OPENSHIFT_IMAGE_STREAM
-          value: rhte-api
+          value: ${OPENSHIFT_IMAGE_STREAM}
         - name: OPENSHIFT_BUILD_CONFIG
-          value: rhte-api
+          value: ${OPENSHIFT_BUILD_CONFIG}
         - name: OPENSHIFT_BUILD_PROJECT
-          value: rhte-build
+          value: ${OPENSHIFT_BUILD_PROJECT}
         - name: OPENSHIFT_TEST_ENVIRONMENT
-          value: rhte-test
+          value: ${OPENSHIFT_TEST_ENVIRONMENT}
         - name: OPENSHIFT_PROD_ENVIRONMENT
-          value: rhte-prod
+          value: ${OPENSHIFT_PROD_ENVIRONMENT}
         - name: OPENSHIFT_DEPLOYMENT_CONFIG
-          value: rhte-api
+          value: ${OPENSHIFT_DEPLOYMENT_CONFIG}
 parameters:
-- description: The GIT repository to use.
-  displayName: GIT Repo URL
-  name: GIT_REPO
+- name: GIT_REPO
   value: https://github.com/nmasse-itix/rhte-api.git
+  required: true
+- name: GIT_BRANCH
+  value: master
+  required: true
+- name: ANSIBLE_TEST_INVENTORY
+  value: 3scale-test
+  required: true
+- name: ANSIBLE_PROD_INVENTORY
+  value: 3scale-prod
+  required: true
+- name: ANSIBLE_JOB_TEMPLATE
+  value: Deploy an API to 3scale
+  required: true
+- name: ANSIBLE_TOWER_SERVER
+  value: tower
+  required: true
+- name: OPENSHIFT_SERVICE_NAME
+  value: rhte-api
+  required: true
+- name: OPENSHIFT_IMAGE_STREAM
+  value: rhte-api
+  required: true
+- name: OPENSHIFT_BUILD_CONFIG
+  value: rhte-api
+  required: true
+- name: OPENSHIFT_BUILD_PROJECT
+  value: rhte-build
+  required: true
+- name: OPENSHIFT_TEST_ENVIRONMENT
+  value: rhte-test
+  required: true
+- name: OPENSHIFT_PROD_ENVIRONMENT
+  value: rhte-prod
+  required: true
+- name: OPENSHIFT_DEPLOYMENT_CONFIG
+  value: rhte-api
+  required: true

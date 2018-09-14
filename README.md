@@ -1,8 +1,33 @@
 # RHTE API Lifecycle Demo
 
+This repository contains all the artefacts to deliver an *API Lifecycle Demo*:
+from the OpenAPI Specifications to the production in 20 minutes.
+
+## Requirements
+
+To setup and deliver this demo, you will need:
+
+- an OpenShift cluster with sufficient RAM (**4GB free**), CPU (**2 vCPU**),
+  and storage (a few Persistent Volumes for a total storage requirements of
+  **1-2 GB**), publicly accessible on the Internet.
+- a GitHub, GitLab or Bitbucket account.
+- an account on [apicur.io](https://studio.apicur.io/).
+- a 3scale SaaS Tenant (you can also use an on-premise tenant with minor changes)
+
+Note: you can deliver this demo fully on-premise by if needed but you will
+need to deploy also:
+
+- a GIT repository (hint: [Gitea](https://gitea.io/))
+- the 3scale API Management Platform
+- the Apicurio Studio
+
 ## Setup
 
-### 1/ Create the OpenShift projects
+### 1/ Fork this repository
+
+Fork this repository using your GitHub account or on any other GIT provider (GitLab, BitBucket, etc.).
+
+### 2/ Create the OpenShift projects
 
 ```sh
 oc new-project rhte-build --display-name="RHTE API (BUILD)"
@@ -11,29 +36,62 @@ oc new-project rhte-prod --display-name="RHTE API (PROD)"
 oc new-project ansible --display-name="Ansible Tower"
 ```
 
-### 2/ Deploy Jenkins in the BUILD environment
+### 3/ Deploy Microcks in the BUILD environment
 
 ```sh
-oc project rhte-build
-oc new-app jenkins-persistent --name=jenkins -p MEMORY_LIMIT=2Gi
-oc env dc/jenkins JENKINS_OPTS=--sessionTimeout=86400
+oc create -f https://raw.githubusercontent.com/microcks/microcks/master/install/openshift/openshift-persistent-full-template.yml -n rhte-build
 ```
 
-### 3/ Give Jenkins the right to manage the TEST and PROD environments
+The command below should be run by a cluster administrator because it requires to create an OAuthClient in OpenShift. In the command below, replace the variables by your values:
+
+- `<project>` : name of project where setup is done. Here `rhte-build`.
+- `<master_url>` : the HTTPS URL of OpenShift master
+- `<app_host_url>` : the Host for Routes, ex `192.168.99.100.nip.io` when using CDK or Minishift.
+
+```sh
+oc new-app -n rhte-build --template=microcks-persistent --param=APP_ROUTE_HOSTNAME=microcks-<project>.<app_host_url> --param=KEYCLOAK_ROUTE_HOSTNAME=keycloak-<project>.<app_host_url> --param=OPENSHIFT_MASTER=<master_url> --param=OPENSHIFT_OAUTH_CLIENT_NAME=<project>-client
+```
+
+Create a Jenkins Master image containing Microcks plugin.
+
+```sh
+oc process -f https://raw.githubusercontent.com/microcks/microcks-jenkins-plugin/master/openshift-jenkins-master-bc.yml | oc create -f - -n rhte-build
+```
+
+Wait for build to finish.
+
+### 4/ Deploy Jenkins in the BUILD environment
+
+```sh
+oc new-app -n rhte-build --name=jenkins  --template=jenkins-persistent --param=NAMESPACE=rhte-build --param=JENKINS_IMAGE_STREAM_TAG=microcks-jenkins-master:latest -p MEMORY_LIMIT=2Gi
+oc env -n rhte-build dc/jenkins JENKINS_OPTS=--sessionTimeout=86400
+```
+
+### 5/ Give Jenkins the right to manage the TEST and PROD environments
 
 ```sh
 oc adm policy add-role-to-user admin system:serviceaccount:rhte-build:jenkins -n rhte-test
 oc adm policy add-role-to-user admin system:serviceaccount:rhte-build:jenkins -n rhte-prod
 ```
 
-### 4/ Build the API Backend
+### 6/ Build the API Backend
+
+Create a new BuildConfig to build the API Backend using your forked repository.
+Do not forget to replace `https://github.com/nmasse-itix/rhte-api.git` by your
+repository URL.
 
 ```sh
 oc new-build -n rhte-build nodejs:8~https://github.com/nmasse-itix/rhte-api.git --strategy=source --name=rhte-api
 oc start-build -n rhte-build rhte-api
 ```
 
-### 5/ Deploy the API Backend to the TEST and PROD environments
+Wait for the build to finish:
+
+```sh
+oc logs -f bc/rhte-api -n rhte-build
+```
+
+### 7/ Deploy the API Backend to the TEST and PROD environments
 
 ```sh
 oc tag rhte-build/rhte-api:latest rhte-api:ready-for-test -n rhte-test
@@ -44,14 +102,14 @@ oc new-app rhte-api:ready-for-prod --name rhte-api -n rhte-prod
 oc expose svc/rhte-api -n rhte-prod
 ```
 
-### 6/ Remove the trigger on the TEST and PROD environments
+### 8/ Remove the trigger on the TEST and PROD environments
 
 ```sh
 oc set triggers dc/rhte-api --from-image=rhte-api:ready-for-test --manual=true -c rhte-api -n rhte-test
 oc set triggers dc/rhte-api --from-image=rhte-api:ready-for-prod --manual=true -c rhte-api -n rhte-prod
 ```
 
-### 7/ Prepare your 3scale SaaS Tenant
+### 9/ Prepare your 3scale SaaS Tenant
 
 Create an Access Token in your 3scale SaaS Tenant that has read-write access to the Account Management API. Please check [3scale documentation](https://access.redhat.com/documentation/en-us/red_hat_3scale/2-saas/html-single/accounts/index#access_tokens) on how to get an access token. Write down this value for later use.
 
@@ -61,14 +119,14 @@ On your 3scale Admin Portal, go the `Developer Portal` section and replace your 
 
 **Do not forget to hit `Save` and `Publish`.**
 
-### 8/ Deploy the 3scale APIcast instances in TEST and PROD
+### 10/ Deploy the 3scale APIcast instances in TEST and PROD
 
 ```sh
 oc process -f apicast-template.yaml -p ACCESS_TOKEN=<YOUR_3SCALE_ACCESS_TOKEN> -p TENANT=<YOUR_3SCALE_TENANT> |oc create -f - -n rhte-test
 oc process -f apicast-template.yaml -p ACCESS_TOKEN=<YOUR_3SCALE_ACCESS_TOKEN> -p TENANT=<YOUR_3SCALE_TENANT> |oc create -f - -n rhte-prod
 ```
 
-### 9/ Create the OpenShift routes for your APIcast gateways
+### 11/ Create the OpenShift routes for your APIcast gateways
 
 ```sh
 oc process -f apicast-routes-template.yaml -p MAJOR_VERSION=1 -p WILDCARD_DOMAIN=test.app.itix.fr | oc create -f - -n rhte-test
@@ -77,7 +135,7 @@ oc process -f apicast-routes-template.yaml -p MAJOR_VERSION=1 -p WILDCARD_DOMAIN
 oc process -f apicast-routes-template.yaml -p MAJOR_VERSION=2 -p WILDCARD_DOMAIN=prod.app.itix.fr | oc create -f - -n rhte-prod
 ```
 
-### 10/ Deploy Ansible Tower
+### 12/ Deploy Ansible Tower
 
 ```sh
 oc project ansible
@@ -112,7 +170,7 @@ The default installation of AWX uses a combination of `latest` tags and an `imag
 oc patch dc/awx --type=json -p '[ { "op": "replace", "path": "/spec/template/spec/containers/0/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/1/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/2/imagePullPolicy", "value": "IfNotPresent" }, { "op": "replace", "path": "/spec/template/spec/containers/3/imagePullPolicy", "value": "IfNotPresent" } ]'
 ```
 
-### 11/ Configure project and job in AWX
+### 13/ Configure project and job in AWX
 
 Login on AWX as admin, go to the *Projects* section and add a new project with following properties :
 
@@ -169,13 +227,15 @@ threescale_cicd_wildcard_domain: prod.app.itix.fr
 
 * Change the name of the new inventory to `3scale-prod` and save
 
-### 12/ Create the Jenkins Pipeline
+### 14/ Create the Jenkins Pipeline
+
+Create the Jenkins pipeline from your forked repository:
 
 ```sh
-oc process -f pipeline-template.yaml |oc create -f - -n rhte-build
+oc process -f pipeline-template.yaml -p GIT_REPO=https://github.com/nmasse-itix/rhte-api.git |oc create -f - -n rhte-build
 ```
 
-## 13/ Jenkins setup for Ansible Tower
+## 15/ Jenkins setup for Ansible Tower
 
 You finally need to configure the connection between Jenkins and AWX/Ansible Tower. To do this, go to Jenkins, click on *Manage Jenkins* > *Manage Plugins* and install the `Ansible Tower` plugin. You do not need to restart Jenkins.
 
@@ -183,7 +243,7 @@ Then click on *Credentials* > *System*, click on *Global credentials (unrestrict
 
 Finally, you also have to configure an alias to your AWX Server into Jenkins. This will allow our Jenkins pipelines to access the AWX server easily without knowing the complete server name or address. Click on *Configure System* in the management section and then go to the *Ansible Tower* section and add a new Tower Installation. Give it a name (we've simply used `tower` in our scripts), fill the URL and specify that it should be accessed using the user and credentials we have just created before.
 
-## 14/ Load the OpenAPI Specifications to Apicurio
+## 16/ Load the OpenAPI Specifications to Apicurio
 
 Go to [studio.apicur.io](https://studio.apicur.io/), login and import the three API contracts in the [api-contract](api-contract) folder.
 
