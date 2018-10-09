@@ -9,26 +9,26 @@ router.use(function (req, res, next) {
 });
 
 router.get("/location", function(req, res) {
-  var response = { "Location": "Praha" };
+  var response = { "Location": "La Defense" };
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
 });
 
 router.get("/timeframe",function(req, res) {
-  var response = { "From": "17/09/2018", "To": "21/09/2018" };
+  var response = { "From": "10/10/2018", "To": "10/10/2018" };
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
 });
-/*
+
 router.get("/participants",function(req, res) {
-  var response = [ "Manfred", "Nicolas" ];
+  var response = [ "Sebastien", "Nicolas" ];
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
 });
-*/
+
 app.use("/",router);
 
 app.use("*",function(req, res) {

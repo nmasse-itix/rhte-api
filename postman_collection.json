@@ -11,17 +11,17 @@
 			"description": "Folder for location",
 			"item": [
 				{
-					"name": "Get Next RHTE Location",
+					"name": "Get Next Location",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "2d7cbe68-c73e-4eda-b4f9-64e4ae1a7608",
+								"id": "285eeaa2-342e-4136-b58a-ee7992196d8a",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Location is Praha\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.Location).to.eql(\"Praha\");",
+									"    pm.expect(jsonData.Location).to.eql(\"La Defense\");",
 									"});"
 								]
 							}
@@ -36,8 +36,8 @@
 					},
 					"response": [
 						{
-							"id": "1c010aad-ee21-4d5e-98af-53c737883e53",
-							"name": "Get Next RHTE Location",
+							"id": "5fd53940-1fda-49cf-a07a-eba6c91f472d",
+							"name": "Get Next Location",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -57,7 +57,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{ \n  \"Location\": \"Praha\"\n}\n"
+							"body": "{ \n  \"Location\": \"La Defense\"\n}\n"
 						}
 					]
 				}
@@ -68,18 +68,18 @@
 			"description": "Folder for timeframe",
 			"item": [
 				{
-					"name": "Get Next RHTE Timeframe",
+					"name": "Get Next Timeframe",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "2878eaa0-5d7f-4514-96dd-7aa7f5b9f590",
+								"id": "e7d6852e-cacd-4b79-9d0d-9140b18dd723",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Has a From and a To\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.From).to.eql(\"17/09/2018\");",
-									"    pm.expect(jsonData.To).to.eql(\"21/09/2018\");",
+									"    pm.expect(jsonData.From).to.eql(\"10/10/2018\");",
+									"    pm.expect(jsonData.To).to.eql(\"10/10/2018\");",
 									"});"
 								]
 							}
@@ -94,8 +94,8 @@
 					},
 					"response": [
 						{
-							"id": "6860c619-916c-4d92-ac0c-a82a40cf8e56",
-							"name": "Get Next RHTE Timeframe",
+							"id": "9c01b8c2-5850-4cae-8795-63ac61a83fb6",
+							"name": "Get Next Timeframe",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -115,7 +115,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{ \n  \"From\": \"17/09/2018\",\n  \"To\": \"21/09/2018\"\n}\n"
+							"body": "{ \n  \"From\": \"10/10/2018\",\n  \"To\": \"10/10/2018\"\n}\n"
 						}
 					]
 				}
@@ -126,7 +126,7 @@
 			"description": "Folder for participants",
 			"item": [
 				{
-					"name": "Get Next RHTE Participants",
+					"name": "Get Next Participants",
 					"event": [
 						{
 							"listen": "test",
@@ -151,8 +151,8 @@
 					},
 					"response": [
 						{
-							"id": "b498acc4-d8dd-4f2d-bd73-1f54d0854dc5",
-							"name": "Get Next RHTE Participants",
+							"id": "077baf3d-14f9-4f79-9b18-d4e0c14dcad1",
+							"name": "Get Next Participants",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -172,7 +172,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "[ \n  \"Manfred\",\n  \"Nicolas\"\n]"
+							"body": "[ \n  \"Sebastien\",\n  \"Nicolas\"\n]"
 						}
 					]
 				}
