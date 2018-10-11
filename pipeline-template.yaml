@@ -105,7 +105,7 @@ parameters:
   value: http://microcks:8080/api
   required: true
 - name: MICROCKS_SERVICE_ID
-  value: RHTE-API:1.1
+  value: RedHat-Event-API:1.1
   required: true
 - name: MICROCKS_TEST_ENDPOINT
   required: true

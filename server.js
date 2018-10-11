@@ -9,21 +9,21 @@ router.use(function (req, res, next) {
 });
 
 router.get("/location", function(req, res) {
-  var response = { "Location": "La Defense" };
+  var response = { "Location": "on-line" };
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
 });
 
 router.get("/timeframe",function(req, res) {
-  var response = { "From": "10/10/2018", "To": "10/10/2018" };
+  var response = { "From": "13/11/2018", "To": "13/11/2018" };
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
 });
 
 router.get("/participants",function(req, res) {
-  var response = [ "Sebastien", "Nicolas" ];
+  var response = [ "Nicolas", "Manfred" ];
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
