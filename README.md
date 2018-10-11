@@ -1,4 +1,4 @@
-# RHTE API Lifecycle Demo
+# API Lifecycle Demo
 
 This repository contains all the artefacts to deliver an *API Lifecycle Demo*:
 from the OpenAPI Specifications to the production in 20 minutes.
@@ -270,34 +270,34 @@ _In this setup, we will develop and deploy an API that gives information about t
 
 _There are two methods:_
 
-- _`GetLocation` to know the location of the next Tech Exchange_
-- _`GetTimeframe` to know when the next Tech Exchange takes place_
+- _`GetLocation` to know the location of the next Red Hat Event_
+- _`GetTimeframe` to know when the next Red Hat Event takes place_
 
 _A first version, a v1.0, is already deployed._
 
 - Open your 3scale Developer Portal
-- Go to `Documentation` and show the RHTE-API service flagged as v1.0
+- Go to `Documentation` and show the Red Hat Event API service flagged as v1.0
 
-_Together, we have been tasked to craft, develop and deploy a v1.1 that provides an additional method `GetParticipants` so that we can know who will attend the next Tech Exchange._
+_Together, we have been tasked to craft, develop and deploy a v1.1 that provides an additional method `GetParticipants` so that we can know who will attend the next Red Hat Event._
 
 _And because strong security is at stake, we will upgrade the current API from an API Key scheme to the more secure protocol “OpenID Connect”. This will be our V2._
 
 _Let’s start our duty with Apicurio. In Apicurio we will create the GetParticipants method and bump the version number so that everyone can know a new version has been released._
 
-- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `RHTE API 1.0`.
+- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `Red Hat Event API 1.0`.
 - Click `Edit API`
 - Change the version number to `1.1.0`
 - Add a path `/participants`
 - Add the `GET` method under `/participants`
 - Define a name, description and operation id for this method
 - Add a `200` response code with a description ("OK")
-- Go back to the `RHTE API` summary and click the three dots
+- Go back to the `Red Hat Event API` summary and click the three dots
 - Click `Publish`, choose `GitHub`
 - Select your organisation, find your forked repository named `rhte-api`, select the branch `master`
 - In the resource field, put `openapi-spec.yaml`
 - Give a commit message and click `Publish API`
 
-_Then, we need to define some examples for this new method. Here I used Postman to define an example: Manfred and myself are attending the Tech Exchange. Then, those examples are used to generate a mock that can be used internally or by partners to develop their clients using our new API._
+_Then, we need to define some examples for this new method. Here I used Postman to define an example: Manfred and myself are attending the next Red Hat Event. Then, those examples are used to generate a mock that can be used internally or by partners to develop their clients using our new API._
 
 - Import the [postman_collection.json](postman_collection.json) file in Postman
 - Show the defined examples
@@ -306,12 +306,12 @@ _Then, we need to define some examples for this new method. Here I used Postman 
 _The GetParticipants method needs to return a list of participants._
 
 - Open your Microcks instance
-- Go to the services list and open the `RHTE-API` service
+- Go to the services list and open the `RedHat-Event-API` service
 - Show the `GetParticipants` method
 - Call it from a curl command:
 
 ```sh
-curl -D - http://microcks-rhte.app.itix.fr/rest/RHTE-API/1.1/participants
+curl -D - http://microcks-rhte.app.itix.fr/rest/RedHat-Event-API/1.1/participants
 ```
 
 _In the meantime, we can start our implementation. Let’s develop some code for our new API Method._
@@ -345,7 +345,7 @@ _For the `GetParticipants` method, we defined a test that ensures the API always
 
 - Show the included tests for the other methods
 - Go to the Microcks interface, go to `Services`
-- Open the `RHTE-API` service
+- Open the `RedHat-Event-API` service
 - Show the latest test, exhibit the response times and payload.
 
 _In the meantime, our API has been deployed at least in the DEV environment. Let see how it looks._
@@ -354,7 +354,7 @@ _In the meantime, our API has been deployed at least in the DEV environment. Let
 - Login with the built-in `john` user account
 - Go to `Applications` and find the smoke test application for the production environment
 - Copy the API Key
-- Go to `Documentation`, choose the `RHTE API (PROD, v1.1)` service
+- Go to `Documentation`, choose the `Red Hat Event API (PROD, v1.1)` service
 - Click on the red exclamation mark
 - Fill-in your API Key
 - Validate
@@ -366,12 +366,12 @@ _The V2 will be based on v1.1 but will use OpenID Connect instead of API Keys._
 
 _As a developer, if I need to use OpenID Connect, I only need to know one thing: how to define it in the OpenID Specification. Let me show you._
 
-- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `RHTE API 1.0`.
+- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `Red Hat Event API 1.0`.
 - Click `Edit API` and show the security definitions and security constraints
 
 _In the OpenID Specification, this part states that we require an API Key to use this API. Let’s replace it with this and now we are stating we want an OpenID Connect token instead._
 
-- Go to `APIs` > `View all APIs` and this time select the `RHTE API 2.0`.
+- Go to `APIs` > `View all APIs` and this time select the `Red Hat Event API 2.0`.
 - Click `Edit API` and show the security definitions and security constraints
 
 _Since it is a breaking change of the API Contract, do not forget to change the API Version to 2.0._
@@ -401,11 +401,11 @@ _If you liked this demo, please have a look at this serie of three articles that
 
 ## Reset the Demo
 
-- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `RHTE API 1.0`.
+- Open the [Apicurio Studio](https://studio.apicur.io/), go to `APIs` > `View all APIs` and select the `Red Hat Event API 1.0`.
 - Set the version back to `1.0`
 - Remove the path `/participants`
 - Publish the API to your GitHub repository
-- Go to your 3scale admin portal and delete the four services (RHTE 1.1 TEST, RHTE 1.1 PROD, RHTE 2.0 TEST, RHTE 2.0 PROD)
+- Go to your 3scale admin portal and delete the four services (Red Hat Event API 1.1 TEST, Red Hat Event API 1.1 PROD, Red Hat Event API 2.0 TEST, Red Hat Event API 2.0 PROD)
 - Also delete the four ActiveDocs
 - Trigger a new pipeline run
 - In GitHub, open the [server.js](server.js) file and comment the `router.get("/participants" ...` lines.
