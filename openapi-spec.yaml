@@ -4,7 +4,7 @@ info:
   title: Red Hat Event API
   description: Red Hat Event API v1.0 - An API that gives information about the Red
     Hat Event
-  version: 1.0.0
+  version: 1.1.0
 paths:
   /location:
     get:
@@ -19,6 +19,14 @@ paths:
       summary: Get Timeframe
       description: Get the timeframe of the next RedHat Event
       operationId: GetTimeframe
+      responses:
+        200:
+          description: OK
+  /participants:
+    get:
+      summary: Get participants
+      description: Get all participants
+      operationId: GetParticipants
       responses:
         200:
           description: OK
