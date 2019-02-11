@@ -78,8 +78,8 @@
 								"exec": [
 									"pm.test(\"Has a From and a To\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.From).to.eql(\"13/11/2018\");",
-									"    pm.expect(jsonData.To).to.eql(\"13/11/2018\");",
+									"    pm.expect(jsonData.From).to.eql(\"19/02/2019\");",
+									"    pm.expect(jsonData.To).to.eql(\"19/02/2019\");",
 									"});"
 								]
 							}
@@ -115,7 +115,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{ \n  \"From\": \"13/11/2018\",\n  \"To\": \"13/11/2018\"\n}\n"
+							"body": "{ \n  \"From\": \"19/02/2019\",\n  \"To\": \"19/02/2019\"\n}\n"
 						}
 					]
 				}
@@ -172,7 +172,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "[ \n  \"Nicolas\",\n  \"Manfred\"\n]"
+							"body": "[ \n  \"Nicolas\",\n  \"David\"\n]"
 						}
 					]
 				}
