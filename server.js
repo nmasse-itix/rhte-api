@@ -21,14 +21,14 @@ router.get("/timeframe",function(req, res) {
      .send(JSON.stringify(response))
      .end();
 });
-
+/*
 router.get("/participants",function(req, res) {
-  var response = [ "Nicolas", "Manfred" ];
+  var response = [ "Nicolas", "David" ];
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
 });
-
+*/
 app.use("/",router);
 
 app.use("*",function(req, res) {
