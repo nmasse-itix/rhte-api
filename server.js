@@ -16,7 +16,7 @@ router.get("/location", function(req, res) {
 });
 
 router.get("/timeframe",function(req, res) {
-  var response = { "From": "13/11/2018", "To": "13/11/2018" };
+  var response = { "From": "19/02/2019", "To": "19/02/2019" };
   res.type('application/json')
      .send(JSON.stringify(response))
      .end();
